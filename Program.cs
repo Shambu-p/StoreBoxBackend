@@ -11,7 +11,12 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 
-builder.Services.AddDbContext<asp_dbContext>(options => {
+// builder.Services.AddDbContext<asp_dbContext>(options => {
+//     options.UseMySql(builder.Configuration.GetConnectionString("my_db"),
+//     Microsoft.EntityFrameworkCore.ServerVersion.Parse("8.0.29-mysql"));
+// });
+
+builder.Services.AddDbContext<StoreBackendContext>(options => {
     options.UseMySql(builder.Configuration.GetConnectionString("my_db"),
     Microsoft.EntityFrameworkCore.ServerVersion.Parse("8.0.29-mysql"));
 });
