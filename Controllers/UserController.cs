@@ -5,8 +5,10 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using StoreBackend.Data;
 using StoreBackend.Models;
+using StoreBackend.Services;
 
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 
 namespace StoreBackend.Controllers
@@ -23,17 +25,20 @@ namespace StoreBackend.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<User>>> all() {
-            return await stContext.Users.ToListAsync();
+            UserService service = new UserService(stContext);
+            return await service.getAllUsers();
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<User>> single(uint id) {
 
-            var user = await stContext.Users.FindAsync(id);
+            UserService service = new UserService(stContext);
+            var user = await service.getUserById(id);
 
             if(user == null) {
-                return NotFound();
+                return NotFound("user not found");
             }
             
             return user;
@@ -43,39 +48,58 @@ namespace StoreBackend.Controllers
         [HttpPost]
         public async Task<ActionResult<User>> add( string name, string email, string password, byte role) {
 
-            User new_user = new User();
-            new_user.Name = name;
-            new_user.Email = email;
-            new_user.Role = role;
-            new_user.Password = BCrypt.Net.BCrypt.HashPassword(password);
-            //BCrypt.Net.BCrypt.Verify("Pa$$w0rd", passwordHash);
-
-            stContext.Users.Add(new_user);
-            var result = await stContext.SaveChangesAsync();
-
+            UserService service = new UserService(stContext);
             // return CreatedAtAction("Add User", new {Id = new_user.Id }, new_user);
-            return new_user;
-
+            return await service.addUser(name, email, password, role);
 
         }
 
         [HttpPut]
-        public async Task<ActionResult<User>> change(uint id, string name, string email, string password, byte role) {
+        public async Task<ActionResult<User>> change(uint id, string name, string email, byte role) {
 
-            User user = stContext.Users.Where(u => u.Id == id).FirstOrDefault<User>();
-
+            UserService service = new UserService(stContext);
             User new_user = new User();
-            new_user.Id = id;
             new_user.Name = name;
+            new_user.Id = id;
             new_user.Email = email;
             new_user.Role = role;
-            new_user.Password = BCrypt.Net.BCrypt.HashPassword(password);
 
-            stContext.Entry(new_user).State = EntityState.Modified;
+            var user = await service.changeUser(new_user);
+            if(user == null) {
+                return NotFound();
+            }
 
-            await stContext.SaveChangesAsync();
+            return user;
 
-            return new_user;
+        }
+
+        [HttpPost("change_password")]
+        public async Task<ActionResult<User>> changePassword(uint id, string current_password, string new_password, string confirm_password){
+            
+            UserService service = new UserService(stContext);
+
+            User found_user = await service.getUserById(id);
+
+            if(found_user == null){
+                return NotFound("user not found!");
+            }
+
+            if(!BCrypt.Net.BCrypt.Verify(current_password, found_user.Password)) {
+                return NotFound("incorrect password!");
+            }
+
+            if(new_password != confirm_password){
+                return NotFound("new passwords does not match!");
+            }
+
+            found_user.Password = new_password;
+
+            var user = await service.changeUser(found_user);
+            if(user == null) {
+                return NotFound("user not found!");
+            }
+
+            return user;
 
         }
 

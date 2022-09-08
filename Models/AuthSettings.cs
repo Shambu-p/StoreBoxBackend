@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 
 namespace StoreBackend.Models
 {
-    public class Product
-    {
-        public string name {get; set;}
-        public int id {get; set;}
+    public class AuthSettings {
+
+        public string securityKey {get; set;}
+    
     }
 }

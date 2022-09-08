@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace StoreBackend.Models
-{
-    public partial class Store
-    {
-        public Store()
-        {
+namespace StoreBackend.Models {
+    
+    public partial class Store {
+
+        public Store() {
             Boxes = new HashSet<Box>();
         }
 
@@ -16,5 +15,7 @@ namespace StoreBackend.Models
 
         public virtual User StoreKeeperNavigation { get; set; } = null!;
         public virtual ICollection<Box> Boxes { get; set; }
+
     }
+
 }

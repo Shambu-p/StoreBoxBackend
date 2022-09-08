@@ -11,9 +11,8 @@ namespace StoreBackend.Data
         public StoreBackendContext() {
         }
 
-        public StoreBackendContext(DbContextOptions<StoreBackendContext> options)
-            : base(options)
-        {
+        public StoreBackendContext(DbContextOptions<StoreBackendContext> options) : base(options) {
+            
         }
 
         public virtual DbSet<Box> Boxes { get; set; } = null!;
