@@ -11,6 +11,6 @@ namespace StoreBackend.Models
         public uint UnboxedAmount { get; set; }
 
         public virtual Item Item { get; set; } = null!;
-        public virtual Store Store { get; set; } = null!;
+        public Store Store { get; set; }
     }
 }

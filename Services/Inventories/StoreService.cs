@@ -26,11 +26,11 @@ namespace StoreBackend.Services.Inventories {
             return await context.Stores.FindAsync(id);
         }
 
-        public async Task<ActionResult<Store>> addStore(string name, uint store_keeper) {
+        public async Task<Store> addStore(string name, uint store_keeper) {
 
             User store_user = await this.getStoreKeeper(store_keeper);
 
-            if(store_user == null){
+            if(store_user == null) {
                 return null;
             }
 

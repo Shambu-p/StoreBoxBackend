@@ -33,7 +33,7 @@ namespace StoreBackend.Controllers {
             this.context = store_context;
             this.jwtSettings = option.Value;
         }
-`
+
         [HttpPost("login")]
         public async Task<ActionResult<UserAuthentication>> Authenticate(string email, string password) {
 

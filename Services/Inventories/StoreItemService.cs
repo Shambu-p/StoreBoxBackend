@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using StoreBackend.Data;
 using StoreBackend.Models;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc;
 
 namespace StoreBackend.Services.Inventories {
 
@@ -15,39 +17,44 @@ namespace StoreBackend.Services.Inventories {
             this.context = db_context;
         }
 
-        public async Task<IEnumerable<StoreItem>> getAll() {
-            return await context.StoreItems.ToListAsync();
+        public async Task<IEnumerable<StoreItem>> getAllItems(uint store_id) {
+            return await context.StoreItems.Where(si => si.StoreId == store_id).ToListAsync();
         }
 
-        public async Task<ActionResult<Store>> createItem(uint store_id, uint item_id, uint total_amount) {
+        public StoreItem storeItem(uint store_id, uint item_id) {
+            return context.StoreItems.Where(si => si.StoreId == store_id && si.ItemId == item_id).FirstOrDefault();
+        }
 
-            Store store = await this.getStore(store_id);
+        public async Task<ActionResult<StoreItem>> createItem(uint store_id, uint item_id, uint total_amount) {
+
+            // Store store = await this.getStore(store_id);
+            var store = context.Stores.Include(s => s.StoreItems).Where(s => s.Id == store_id).First();
             Item item = await this.getItem(item_id);
 
             if(store == null && item == null){
                 return null;
             }
 
+
             StoreItem new_store_item = new StoreItem();
             new_store_item.StoreId = store_id;
             new_store_item.ItemId = item_id;
             new_store_item.TotalAmount = total_amount;
             new_store_item.UnboxedAmount = total_amount;
+            // new_store_item.Store = store;
 
-            context.StoreItems.Add(new_store_item);
-            var result = await context.SaveChangesAsync();
+            store.StoreItems.Add(new_store_item);
+            await context.SaveChangesAsync();
 
             new_store_item.Item = item;
-            new_store_item.Store = store;
 
             return new_store_item;
 
         }
 
-
         public async Task<StoreItem> addItem(uint item_id, uint store_id, uint new_amount) {
 
-            StoreItem store_item = await this.getStoreItem(item_id, store_id);
+            StoreItem store_item = this.getStoreItem(item_id, store_id);
 
             if(store_item != null) {
                 store_item.TotalAmount += new_amount;
@@ -61,7 +68,7 @@ namespace StoreBackend.Services.Inventories {
 
         public async Task<StoreItem> itemBoxing(uint item_id, uint store_id, uint new_amount) {
             
-            StoreItem store_item = await this.getStoreItem(item_id, store_id);
+            StoreItem store_item = this.getStoreItem(item_id, store_id);
 
             if(store_item != null) {
 
@@ -79,7 +86,7 @@ namespace StoreBackend.Services.Inventories {
 
         public async Task<StoreItem> itemUnboxing(uint item_id, uint store_id, uint new_amount) {
 
-            StoreItem store_item = await this.getStoreItem(item_id, store_id);
+            StoreItem store_item = this.getStoreItem(item_id, store_id);
 
             if(store_item != null) {
 
@@ -98,12 +105,12 @@ namespace StoreBackend.Services.Inventories {
             context.Entry(change_item).State = EntityState.Modified;
             await context.SaveChangesAsync();
 
-            return store_item;
+            return change_item;
 
         }
 
         public StoreItem getStoreItem(uint item_id, uint store_id){
-            return this.context.StoreItem.Where(st => st.ItemId == item_id && st.StoreId == store_id).FirstOrDefault<StoreItem>();
+            return this.context.StoreItems.Where(st => st.ItemId == item_id && st.StoreId == store_id).FirstOrDefault<StoreItem>();
         }
 
         private async Task<Store> getStore(uint store_id) {
@@ -113,7 +120,7 @@ namespace StoreBackend.Services.Inventories {
 
         private async Task<Item> getItem(uint store_id) {
             StoreBackend.Services.Items.ItemService service = new StoreBackend.Services.Items.ItemService(this.context);
-            return await service.getStoreById(store_id);
+            return await service.getItemById(store_id);
         }
 
         private async Task<User> getUser(uint id){

@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using StoreBackend.Data;
 using StoreBackend.Models;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc;
 
 namespace StoreBackend.Services.Cartoons {
     
@@ -16,7 +18,7 @@ namespace StoreBackend.Services.Cartoons {
         }
 
         public async Task<IEnumerable<BoxItem>> getAll() {
-            return await context.Stores.ToListAsync();
+            return await context.BoxItems.ToListAsync();
         }
         
     }

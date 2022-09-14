@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using StoreBackend.Data;
 using StoreBackend.Models;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc;
 
 namespace StoreBackend.Services.Cartoons {
 
@@ -24,8 +26,8 @@ namespace StoreBackend.Services.Cartoons {
             StoreBackend.Services.Inventories.StoreService store_service = new StoreBackend.Services.Inventories.StoreService(this.context);
             StoreBackend.Services.UserService user_service = new StoreBackend.Services.UserService(this.context);
 
-            User user = user_service.getUserById(creator_user);
-            Store store = store_service.getStoreById(store_service);
+            User user = await user_service.getUserById(creator_user);
+            Store store = await store_service.getStoreById(store_id);
 
             if(user != null && store != null) {
                 

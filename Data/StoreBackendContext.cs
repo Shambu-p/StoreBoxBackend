@@ -8,8 +8,7 @@ namespace StoreBackend.Data
 {
     public partial class StoreBackendContext : DbContext
     {
-        public StoreBackendContext() {
-        }
+        public StoreBackendContext() {}
 
         public StoreBackendContext(DbContextOptions<StoreBackendContext> options) : base(options) {
             
@@ -112,7 +111,7 @@ namespace StoreBackend.Data
                     .HasConstraintName("stored_item");
 
                 entity.HasOne(d => d.Store)
-                    .WithMany()
+                    .WithMany(s => s.StoreItems)
                     .HasForeignKey(d => d.StoreId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("item_store");

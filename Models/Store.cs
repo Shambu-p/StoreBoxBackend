@@ -15,6 +15,7 @@ namespace StoreBackend.Models {
 
         public virtual User StoreKeeperNavigation { get; set; } = null!;
         public virtual ICollection<Box> Boxes { get; set; }
+        public List<StoreItem> StoreItems {get; set;}
 
     }
 
