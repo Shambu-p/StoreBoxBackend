@@ -21,7 +21,7 @@ namespace StoreBackend.Services.Cartoons {
             return await context.Boxes.FindAsync(id);
         }
 
-        public async Task<ActionResult<Box>> addBox(uint store_id, uint creator_user){
+        public async Task<Box> addBox(uint store_id, uint creator_user){
 
             StoreBackend.Services.Inventories.StoreService store_service = new StoreBackend.Services.Inventories.StoreService(this.context);
             StoreBackend.Services.UserService user_service = new StoreBackend.Services.UserService(this.context);

@@ -5,6 +5,7 @@ namespace StoreBackend.Models
 {
     public partial class BoxItem
     {
+        public uint Id {get; set;}
         public uint BoxId { get; set; }
         public uint ItemId { get; set; }
         public int Amount { get; set; }

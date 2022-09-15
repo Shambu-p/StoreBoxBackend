@@ -5,12 +5,13 @@ namespace StoreBackend.Models
 {
     public partial class StoreItem
     {
+        public uint Id {get; set;}
         public uint StoreId { get; set; }
         public uint ItemId { get; set; }
         public uint TotalAmount { get; set; }
         public uint UnboxedAmount { get; set; }
 
-        public virtual Item Item { get; set; } = null!;
+        public Item Item { get; set; }
         public Store Store { get; set; }
     }
 }

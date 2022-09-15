@@ -8,7 +8,7 @@ namespace StoreBackend.Models
         public User()
         {
             Boxes = new HashSet<Box>();
-            Stores = new HashSet<Store>();
+            Stores = new List<Store>();
         }
 
         public uint Id { get; set; }
@@ -18,6 +18,6 @@ namespace StoreBackend.Models
         public byte Role { get; set; }
 
         public virtual ICollection<Box> Boxes { get; set; }
-        public virtual ICollection<Store> Stores { get; set; }
+        public List<Store> Stores { get; set; }
     }
 }

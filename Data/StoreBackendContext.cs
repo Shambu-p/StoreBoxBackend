@@ -51,7 +51,6 @@ namespace StoreBackend.Data
 
             modelBuilder.Entity<BoxItem>(entity =>
             {
-                entity.HasNoKey();
 
                 entity.HasIndex(e => e.BoxId, "box");
 
@@ -96,7 +95,6 @@ namespace StoreBackend.Data
 
             modelBuilder.Entity<StoreItem>(entity =>
             {
-                entity.HasNoKey();
 
                 entity.ToTable("StoreItem");
 
@@ -105,7 +103,7 @@ namespace StoreBackend.Data
                 entity.HasIndex(e => e.ItemId, "stored_item");
 
                 entity.HasOne(d => d.Item)
-                    .WithMany()
+                    .WithMany(i => i.StoreItems)
                     .HasForeignKey(d => d.ItemId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("stored_item");

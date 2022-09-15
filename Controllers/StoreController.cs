@@ -28,12 +28,12 @@ namespace StoreBackend.Controllers
 
         }
 
-        [HttpGet("store_items/{store_id}")]
+        [HttpGet("items/{store_id}")]
         public async Task<ActionResult<IEnumerable<StoreItem>>> getAllStoreItems(uint store_id) {
 
-            // StoreItemService service = new StoreItemService(context);
-            // return Ok(await service.getAllItems(store_id));
-            return Ok(await context.Stores.Include(s => s.StoreItems).Where(s => s.Id == store_id).ToListAsync());
+            StoreService service = new StoreService(context);
+            return Ok(await service.getAllItems(store_id));
+            // return Ok(await context.StoreItems.Include(s => s.Store).Where(s => s.Store.Id == store_id).ToListAsync());
 
         }
 
@@ -45,11 +45,11 @@ namespace StoreBackend.Controllers
 
         }
 
-        [HttpGet("store_items/{store_id}/{item_id}")]
-        public async Task<ActionResult<IEnumerable<StoreItem>>> getAllStoreItems(uint store_id, uint item_id) {
+        [HttpGet("items/single_item/{id}")]
+        public async Task<ActionResult<IEnumerable<StoreItem>>> getStoreItem(uint id) {
 
             StoreItemService service = new StoreItemService(context);
-            return Ok(service.storeItem(store_id, item_id));
+            return Ok(service.storeItem(id));
 
         }
 
@@ -61,7 +61,7 @@ namespace StoreBackend.Controllers
 
         }
 
-        [HttpPost("store_items")]
+        [HttpPost("items")]
         public async Task<ActionResult<StoreItem>> createStoreItem(uint store_id, uint item_id, uint amount) {
 
             StoreItemService service = new StoreItemService(context);
@@ -82,27 +82,11 @@ namespace StoreBackend.Controllers
 
         }
 
-        [HttpPut("store_items/add_amount")]
+        [HttpPut("items/add_amount")]
         public async Task<ActionResult<StoreItem>> addStoreItemAmount(uint store_id, uint item_id, uint amount) {
 
             StoreItemService service = new StoreItemService(context);
-            return Ok(await service.createItem(store_id, item_id, amount));
-
-        }
-
-        [HttpPut("store_items/item_boxing")]
-        public async Task<ActionResult<StoreItem>> boxingItem(uint store_id, uint item_id, uint amount) {
-
-            StoreItemService service = new StoreItemService(context);
-            return Ok(await service.itemBoxing(item_id, store_id, amount));
-
-        }
-
-        [HttpPut("store_items/item_unboxing")]
-        public async Task<ActionResult<StoreItem>> unboxingItem(uint store_id, uint item_id, uint amount) {
-
-            StoreItemService service = new StoreItemService(context);
-            return Ok(await service.itemUnboxing(item_id, store_id, amount));
+            return Ok(await service.addItem(store_id, item_id, amount));
 
         }
 

@@ -18,11 +18,14 @@ namespace StoreBackend.Services.Inventories {
         }
 
         public async Task<IEnumerable<StoreItem>> getAllItems(uint store_id) {
-            return await context.StoreItems.Where(si => si.StoreId == store_id).ToListAsync();
+            return await context.StoreItems
+                                .Include(si => si.Store) //.ThenInclude(store => store.StoreKeeperNavigation)
+                                .Include(si => si.Item)
+                                .Where(si => si.StoreId == store_id).ToListAsync();
         }
 
-        public StoreItem storeItem(uint store_id, uint item_id) {
-            return context.StoreItems.Where(si => si.StoreId == store_id && si.ItemId == item_id).FirstOrDefault();
+        public StoreItem storeItem(uint id) {
+            return context.StoreItems.Include(si => si.Store).Include(si => si.Item).Where(si => si.Id == id).FirstOrDefault();
         }
 
         public async Task<ActionResult<StoreItem>> createItem(uint store_id, uint item_id, uint total_amount) {
@@ -54,12 +57,15 @@ namespace StoreBackend.Services.Inventories {
 
         public async Task<StoreItem> addItem(uint item_id, uint store_id, uint new_amount) {
 
-            StoreItem store_item = this.getStoreItem(item_id, store_id);
+            // StoreItem store_item = this.getStoreItem(item_id, store_id);
+            StoreItem store_item = this.context.StoreItems.Where(st => st.ItemId == item_id && st.StoreId == store_id).FirstOrDefault();
 
             if(store_item != null) {
-                store_item.TotalAmount += new_amount;
-                store_item.UnboxedAmount += new_amount;
-                return await this.changeItem(store_item);
+                store_item.TotalAmount = store_item.TotalAmount + new_amount;
+                store_item.UnboxedAmount = store_item.UnboxedAmount + new_amount;
+                this.context.SaveChanges();
+                // return await this.changeItem(store_item);
+                // return store_item;
             }
 
             return store_item;
@@ -84,7 +90,7 @@ namespace StoreBackend.Services.Inventories {
 
         }
 
-        public async Task<StoreItem> itemUnboxing(uint item_id, uint store_id, uint new_amount) {
+        public async Task<StoreItem> itemUnboxing(uint store_id, uint item_id, uint new_amount) {
 
             StoreItem store_item = this.getStoreItem(item_id, store_id);
 
@@ -111,6 +117,10 @@ namespace StoreBackend.Services.Inventories {
 
         public StoreItem getStoreItem(uint item_id, uint store_id){
             return this.context.StoreItems.Where(st => st.ItemId == item_id && st.StoreId == store_id).FirstOrDefault<StoreItem>();
+        }
+
+        public async Task<StoreItem> getStoreItemById(uint id){
+            return await this.context.StoreItems.FindAsync(id);
         }
 
         private async Task<Store> getStore(uint store_id) {

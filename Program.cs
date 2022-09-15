@@ -7,6 +7,7 @@ using System.IdentityModel.Tokens.Jwt;
 using Swashbuckle.AspNetCore.Filters;
 using Microsoft.OpenApi.Models;
 using System.Text;
+using Newtonsoft.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -58,6 +59,9 @@ builder.Services.AddDbContext<StoreBackendContext>(options => {
     options.UseMySql(builder.Configuration.GetConnectionString("my_db"),
     Microsoft.EntityFrameworkCore.ServerVersion.Parse("8.0.29-mysql"));
 });
+
+builder.Services.AddMvc(option => option.EnableEndpointRouting = false)
+    .AddNewtonsoftJson(opt => opt.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);
 
 
 var app = builder.Build();

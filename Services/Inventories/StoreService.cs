@@ -80,6 +80,13 @@ namespace StoreBackend.Services.Inventories {
 
         }
 
+        public async Task<Store> getAllItems(uint store_id) {
+            return context.Stores
+                                .Include(s => s.StoreItems) //.ThenInclude(store => store.StoreKeeperNavigation)
+                                .ThenInclude(store_item => store_item.Item)
+                                .Where(s => s.Id == store_id).FirstOrDefault();
+        }
+
         private async Task<User> getStoreKeeper(uint id){
             StoreBackend.Services.UserService service = new StoreBackend.Services.UserService(context);
             return await service.getUserById(id);

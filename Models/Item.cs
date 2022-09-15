@@ -8,5 +8,7 @@ namespace StoreBackend.Models
         public uint Id { get; set; }
         public string Name { get; set; } = null!;
         public double Price { get; set; }
+        
+        public List<StoreItem> StoreItems {get; set;}
     }
 }
