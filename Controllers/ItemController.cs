@@ -43,15 +43,19 @@ namespace StoreBackend.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Item>> addItem(string name, double price){
+        public async Task<ActionResult<Item>> addItem([FromForm] string name, [FromForm] double price){
             ItemService service = new ItemService(context);
             return await service.addItem(name, price);
         }
 
         [HttpPut]
-        public async Task<ActionResult<Item>> changeItem([FromBody] Item new_item){
+        public async Task<ActionResult<Item>> changeItem([FromForm] uint id, [FromForm] string name, [FromForm] double price){
             
             ItemService service = new ItemService(context);
+            Item new_item = new Item();
+            new_item.Id = id;
+            new_item.Name = name;
+            new_item.Price = price;
             Item item = await service.changeItem(new_item);
 
             if(item == null){

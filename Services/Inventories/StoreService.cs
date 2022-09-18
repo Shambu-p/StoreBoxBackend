@@ -23,7 +23,7 @@ namespace StoreBackend.Services.Inventories {
         }
 
         public async Task<Store> getStoreById(uint id){
-            return await context.Stores.FindAsync(id);
+            return context.Stores.Include(s => s.StoreKeeperNavigation).Where(s => s.Id ==  id).FirstOrDefault();
         }
 
         public async Task<Store> addStore(string name, uint store_keeper) {

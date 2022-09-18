@@ -27,7 +27,7 @@ namespace StoreBackend.Controllers {
         public readonly StoreBackendContext context;
         public readonly AuthSettings jwtSettings;
 
-        public static readonly string claim_id = "Id";
+        // public static readonly string claim_id = "Id";
 
         public AuthController (StoreBackendContext store_context, IOptions<AuthSettings> option) {
             this.context = store_context;
@@ -35,23 +35,23 @@ namespace StoreBackend.Controllers {
         }
 
         [HttpPost("login")]
-        public async Task<ActionResult<UserAuthentication>> Authenticate(string email, string password) {
+        public async Task<ActionResult<UserAuthentication>> Authenticate([FromBody] AuthInput inputs) {
 
             UserService service = new UserService(context);
-            User found_user = await service.getUserByEmail(email);
+            User found_user = await service.getUserByEmail(inputs.email);
             
             if(found_user == null) {
                 return NotFound("user not found");
             }
 
-            if(!BCrypt.Net.BCrypt.Verify(password, found_user.Password)) {
+            if(!BCrypt.Net.BCrypt.Verify(inputs.password, found_user.Password)) {
                 return NotFound("incorrect password!");
             }
 
             var token_descriptor = new SecurityTokenDescriptor{
                 Subject = new ClaimsIdentity(new Claim[]{
                         // new Claim(ClaimTypes.Name, found_user.Email)
-                        new Claim(claim_id, found_user.Id.ToString()),
+                        new Claim("Id", found_user.Id.ToString()),
                         new Claim("Name", found_user.Name),
                         new Claim("Email", found_user.Email),
                         new Claim("Role", found_user.Role.ToString())

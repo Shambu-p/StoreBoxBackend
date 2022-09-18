@@ -7,11 +7,13 @@ using Microsoft.AspNetCore.Mvc;
 using StoreBackend.Data;
 using StoreBackend.Models;
 using StoreBackend.Services.Inventories;
+using Microsoft.AspNetCore.Authorization;
 
 namespace StoreBackend.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class StoreController : ControllerBase {
         
         private readonly StoreBackendContext context;
@@ -54,10 +56,10 @@ namespace StoreBackend.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Store>> addStore(string store_name, uint store_keeper) {
+        public async Task<ActionResult<Store>> addStore([FromForm] string store_name, [FromForm] uint store_keeper) {
 
             StoreService service = new StoreService(context);
-            return Ok(await service.addStore(store_name, store_keeper));
+            return Ok(await service.addStore(store_name, store_keeper));                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
 
         }
 
@@ -70,7 +72,7 @@ namespace StoreBackend.Controllers
         }
 
         [HttpPut]
-        public async Task<ActionResult<Store>> editStore(uint store_id, string store_name, uint store_keeper) {
+        public async Task<ActionResult<Store>> editStore([FromForm] uint store_id, [FromForm] string store_name, [FromForm] uint store_keeper) {
 
             StoreService service = new StoreService(context);
             Store store = new Store();

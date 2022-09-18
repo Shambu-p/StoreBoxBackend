@@ -10,11 +10,13 @@ using StoreBackend.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace StoreBackend.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class UserController : ControllerBase
     {
         
@@ -25,7 +27,6 @@ namespace StoreBackend.Controllers
         }
 
         [HttpGet]
-        [Authorize]
         public async Task<ActionResult<IEnumerable<User>>> all() {
             UserService service = new UserService(stContext);
             return await service.getAllUsers();
@@ -46,7 +47,7 @@ namespace StoreBackend.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<User>> add( string name, string email, string password, byte role) {
+        public async Task<ActionResult<User>> add([FromForm] string name,[FromForm] string email,[FromForm] string password,[FromForm] byte role) {
 
             UserService service = new UserService(stContext);
             // return CreatedAtAction("Add User", new {Id = new_user.Id }, new_user);
@@ -55,7 +56,7 @@ namespace StoreBackend.Controllers
         }
 
         [HttpPut]
-        public async Task<ActionResult<User>> change(uint id, string name, string email, byte role) {
+        public async Task<ActionResult<User>> change([FromForm]uint id,[FromForm] string name,[FromForm] string email,[FromForm] byte role) {
 
             UserService service = new UserService(stContext);
             User new_user = new User();
@@ -73,12 +74,12 @@ namespace StoreBackend.Controllers
 
         }
 
-        [HttpPost("change_password")]
-        public async Task<ActionResult<User>> changePassword(uint id, string current_password, string new_password, string confirm_password){
+        [HttpPut("change_password")]
+        public async Task<ActionResult<User>> changePassword([FromForm] string current_password, [FromForm] string new_password, [FromForm] string confirm_password) {
             
             UserService service = new UserService(stContext);
 
-            User found_user = await service.getUserById(id);
+            User found_user = await service.getUserById(uint.Parse(User?.FindFirstValue("Id")));
 
             if(found_user == null){
                 return NotFound("user not found!");

@@ -63,6 +63,10 @@ builder.Services.AddDbContext<StoreBackendContext>(options => {
 builder.Services.AddMvc(option => option.EnableEndpointRouting = false)
     .AddNewtonsoftJson(opt => opt.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);
 
+var cors_name = "app_cors";
+builder.Services.AddCors(option => option.AddPolicy(name: cors_name, policy => {
+    policy.WithOrigins("*").AllowAnyMethod().AllowAnyHeader();
+}));
 
 var app = builder.Build();
 
@@ -73,6 +77,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseCors(cors_name);
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
