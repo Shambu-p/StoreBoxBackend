@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace StoreBackend.Models
+namespace StoreBackend.Domain.Entity
 {
     public partial class User
     {
-        public User()
-        {
+        public User() {
             Boxes = new HashSet<Box>();
             Stores = new List<Store>();
         }

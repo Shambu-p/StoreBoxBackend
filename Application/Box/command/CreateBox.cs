@@ -5,8 +5,9 @@ using System.Threading.Tasks;
 
 namespace StoreBackend.Application.Box.command
 {
-    public class CreateBox
-    {
+    public class CreateBox {
+
+        
         
     }
 }

@@ -5,8 +5,7 @@ using System.Threading.Tasks;
 
 namespace StoreBackend.Models
 {
-    public class UserAuthentication
-    {
+    public class UserAuthentication {
         public uint Id { get; set; }
         public string Name { get; set; } = null!;
         public string Email { get; set; } = null!;

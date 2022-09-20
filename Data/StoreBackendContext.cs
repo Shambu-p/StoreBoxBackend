@@ -49,8 +49,7 @@ namespace StoreBackend.Data
                     .HasConstraintName("box_creator");
             });
 
-            modelBuilder.Entity<BoxItem>(entity =>
-            {
+            modelBuilder.Entity<BoxItem>(entity => {
 
                 entity.HasIndex(e => e.BoxId, "box");
 
