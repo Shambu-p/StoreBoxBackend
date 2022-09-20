@@ -60,14 +60,26 @@ namespace StoreBackend.Services.Inventories {
             // StoreItem store_item = this.getStoreItem(item_id, store_id);
             StoreItem store_item = this.context.StoreItems.Where(st => st.ItemId == item_id && st.StoreId == store_id).FirstOrDefault();
 
-            if(store_item != null) {
-                store_item.TotalAmount = store_item.TotalAmount + new_amount;
-                store_item.UnboxedAmount = store_item.UnboxedAmount + new_amount;
-                this.context.SaveChanges();
-                // return await this.changeItem(store_item);
-                // return store_item;
-            }
+            store_item.TotalAmount = store_item.TotalAmount + new_amount;
+            store_item.UnboxedAmount = store_item.UnboxedAmount + new_amount;
+            this.context.SaveChanges();
+            // return await this.changeItem(store_item);
+            // return store_item;
 
+            return store_item;
+
+        }
+
+        public async Task<StoreItem> minimizeItem(uint item_id, uint store_id, uint new_amount) {
+
+            StoreItem store_item = this.context.StoreItems.Where(st => st.ItemId == item_id && st.StoreId == store_id).FirstOrDefault();
+
+            if(new_amount > store_item.UnboxedAmount){
+                return null;
+            }
+            store_item.TotalAmount = store_item.TotalAmount - new_amount;
+            store_item.UnboxedAmount = store_item.UnboxedAmount - new_amount;
+            this.context.SaveChanges();
             return store_item;
 
         }

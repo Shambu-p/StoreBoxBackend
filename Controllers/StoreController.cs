@@ -64,10 +64,16 @@ namespace StoreBackend.Controllers
         }
 
         [HttpPost("items")]
-        public async Task<ActionResult<StoreItem>> createStoreItem(uint store_id, uint item_id, uint amount) {
+        public async Task<ActionResult<StoreItem>> createStoreItem([FromForm] uint store_id, [FromForm] uint item_id, [FromForm] uint amount) {
 
             StoreItemService service = new StoreItemService(context);
-            return await service.createItem(store_id, item_id, amount);
+            var store_item = await service.createItem(store_id, item_id, amount);
+
+            if(store_item != null){
+                return NotFound("operation failed!");
+            }else{
+                return store_item;
+            }
 
         }
 
@@ -84,11 +90,28 @@ namespace StoreBackend.Controllers
 
         }
 
-        [HttpPut("items/add_amount")]
-        public async Task<ActionResult<StoreItem>> addStoreItemAmount(uint store_id, uint item_id, uint amount) {
+        [HttpPut("items/change_amount")]
+        public async Task<ActionResult<StoreItem>> addStoreItemAmount([FromForm] uint store_id, [FromForm] uint item_id, [FromForm] int amount) {
 
-            StoreItemService service = new StoreItemService(context);
-            return Ok(await service.addItem(store_id, item_id, amount));
+            try{
+                StoreItemService service = new StoreItemService(context);
+                StoreItem store_item;
+                
+                if(amount > 0){
+                    store_item = await service.addItem(store_id, item_id, Convert.ToUInt32(amount));
+                }else{
+                    store_item = await service.minimizeItem(store_id, item_id, Convert.ToUInt32(Math.Abs(amount)));
+                }
+
+                if(store_item == null){
+                    return NotFound("operation failed!");
+                }
+
+                return Ok(store_item);
+
+            }catch(Exception ex){
+                return NotFound(ex.Message);
+            }
 
         }
 
